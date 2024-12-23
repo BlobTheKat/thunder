@@ -13,5 +13,6 @@ Modules:
 - 🔍 EntityESP (G)
 - 🛡️ Safe (F)
 - 🌊 Jesus (M)
+- 🥖 Breadcrumbs (B)
 
 More coming soon!

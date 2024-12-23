@@ -60,25 +60,6 @@ Module('\\+eFreecam (H)', KEYS.H, null, () => {cam.x -= cam.baseX; cam.y -= cam.
 
 const esp = Module('\\+dEntityESP (G)', KEYS.G)
 const espColPlayer = vec4(.5), espColLiving = vec4(.25,.75,.25,.5), espColOther = vec4(.25,.25,.75,.5)
-drawLayer('world', 2999, (c, w, h) => {
-	if(esp.enabled){
-		const mex = ifloat(me.x + pointer.x - cam.x), mey = ifloat(me.y + me.head + pointer.y - cam.y)
-		c.translate(mex, mey)
-		for(const e of entityMap.values()){
-			if(e == me) continue
-			const c1 = c.sub()
-			let x = ifloat(e.ix - cam.x) - mex, y = ifloat(e.iy + e.height/3 - cam.y) - mey
-			c1.rotate(atan2(x, y))
-			c1.drawRect(-0.02, -0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
-		}
-	}
-	for(const {0:x,1:y,2:time} of placedBlocks){
-		const op = 1-(t-time)
-		if(op<=0){ placedBlocks.delete(x,y);continue }
-		toBlockExact(c, x, y)
-		c.draw(blockPlaceCol.times(op))
-	}
-})
 
 const safe = Module('\\+aSafe (F)', KEYS.F, () => {
 	Blocks.fire.solid = true
@@ -103,4 +84,45 @@ const jesus = Module('\\+cJesus (M)', KEYS.M, () => {
 	wat.solid = lav.solid = false
 	Blocks.waterTop.blockShape[3] = Blocks.lavaTop.blockShape[3] = 7/8
 	for(let i = 1; i < 8; i++) Blocks['waterFlowing'+i].blockShape[3] = Blocks['lavaFlowing'+i].blockShape[3] -= .125
+})
+
+const bread = Module('\\+1Breadcrumbs (B)', KEYS.B, null, () => breadTrail.length = 0)
+let breadTrail = []
+const breadCol = vec4(1,0,0,1)
+let lastBread = 0
+drawLayer('world', 2999, (c, w, h) => {
+	if(esp.enabled){
+		const mex = ifloat(me.x + pointer.x - cam.x), mey = ifloat(me.y + me.head + pointer.y - cam.y)
+		c.translate(mex, mey)
+		for(const e of entityMap.values()){
+			if(e == me) continue
+			const c1 = c.sub()
+			let x = ifloat(e.ix - cam.x) - mex, y = ifloat(e.iy + e.height/3 - cam.y) - mey
+			c1.rotate(atan2(x, y))
+			c1.drawRect(-0.02, -0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
+		}
+	}
+	for(const {0:x,1:y,2:time} of placedBlocks){
+		const op = 1-(t-time)
+		if(op<=0){ placedBlocks.delete(x,y);continue }
+		toBlockExact(c, x, y)
+		c.draw(blockPlaceCol.times(op))
+	}
+	if(bread.enabled){
+		const len = breadTrail.length - 2
+		const c1 = c.sub()
+		c1.translate(-cam.x, -cam.y)
+		for(let i = 0; i < len; i += 2){
+			const x = breadTrail[i], y = breadTrail[i+1], w = breadTrail[i+2]-x, h = breadTrail[i+3]-y
+			const ilen = .02/hypot(w, h)
+			const w1 = -h*ilen, h1 = w*ilen
+			c1.drawMat(w1*-2, h1*-2, w, h, x+w1, y+h1, breadCol)
+		}
+		add: if(t > lastBread+.05){
+			const dx = me.x-breadTrail[len], dy = me.y-breadTrail[len+1]
+			if(dx*dx+dy*dy<.01) break add
+			breadTrail.push(me.x, me.y)
+			lastBread = t
+		}
+	}
 })
