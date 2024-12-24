@@ -90,23 +90,23 @@ const bread = Module('\\+1Breadcrumbs (B)', KEYS.B, null, () => breadTrail.lengt
 let breadTrail = []
 const breadCol = vec4(1,0,0,1)
 let lastBread = 0
-drawLayer('world', 2999, (c, w, h) => {
+drawLayer('world', 999, (c, w, h) => {
 	if(esp.enabled){
 		const mex = ifloat(me.x + pointer.x - cam.x), mey = ifloat(me.y + me.head + pointer.y - cam.y)
-		c.translate(mex, mey)
 		for(const e of entityMap.values()){
 			if(e == me) continue
 			const c1 = c.sub()
 			let x = ifloat(e.ix - cam.x) - mex, y = ifloat(e.iy + e.height/3 - cam.y) - mey
 			c1.rotate(atan2(x, y))
-			c1.drawRect(-0.02, -0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
+			c1.drawRect(mex-0.02, mey-0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
 		}
 	}
+	const c1 = c.sub()
 	for(const {0:x,1:y,2:time} of placedBlocks){
 		const op = 1-(t-time)
 		if(op<=0){ placedBlocks.delete(x,y);continue }
-		toBlockExact(c, x, y)
-		c.draw(blockPlaceCol.times(op))
+		toBlockExact(c1, x, y)
+		c1.draw(blockPlaceCol.times(op))
 	}
 	if(bread.enabled){
 		const len = breadTrail.length - 2

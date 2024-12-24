@@ -2,7 +2,7 @@
 
 Under Client mods, add this line to the first text box:
 ```
-https://raw.githubusercontent.com/BlobTheKat/thunder/refs/heads/main/index.js
+https://raw.githubusercontent.com/BlobTheKat/thunder/refs/heads/main/index.js^1
 ```
 
 Modules:
