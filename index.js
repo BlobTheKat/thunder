@@ -93,13 +93,15 @@ let lastBread = 0
 drawLayer('world', 999, (c, w, h) => {
 	if(esp.enabled){
 		const mex = ifloat(me.x + pointer.x - cam.x), mey = ifloat(me.y + me.head + pointer.y - cam.y)
+		c.translate(mex, mey)
 		for(const e of entityMap.values()){
 			if(e == me) continue
 			const c1 = c.sub()
 			let x = ifloat(e.ix - cam.x) - mex, y = ifloat(e.iy + e.height/3 - cam.y) - mey
 			c1.rotate(atan2(x, y))
-			c1.drawRect(mex-0.02, mey-0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
+			c1.drawRect(-0.02, -0.02, 0.04, hypot(x, y), e instanceof Entities.player ? espColPlayer : e.living ? espColLiving : espColOther)
 		}
+		c.translate(-mex, -mey)
 	}
 	const c1 = c.sub()
 	for(const {0:x,1:y,2:time} of placedBlocks){
