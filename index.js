@@ -1,4 +1,4 @@
-import { setGamma, cam, pointer, toBlockExact, entityMap } from 'world'
+import { setGamma, cam, pointer, toBlockExact, entityMap, renderOptions } from 'world'
 import { getblock } from 'ant'
 import { drawLayer, preframe } from 'api'
 import { Entities, Blocks } from 'definitions'
@@ -9,7 +9,11 @@ console.log('\x1b[33;1mThunder\x1b[m beta 1.0')
 
 Module('\\+bFullbright (L)', KEYS.L, () => {
 	setGamma(new Array(16).fill(Infinity))
-}, () => setGamma(options.gamma))
+	renderOptions.lightUpdates = false
+}, () => {
+	setGamma(options.gamma)
+	renderOptions.lightUpdates = true
+})
 
 let o = 0
 Module('\\+7No distractions (K)', KEYS.K, () => {
